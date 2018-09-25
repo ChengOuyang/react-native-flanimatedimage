@@ -21,6 +21,7 @@
   
   FLAnimatedImage *_image;
   FLAnimatedImageView *_imageView;
+  UIImageView *_staticImageView;
   
 }
 
@@ -28,6 +29,7 @@
 {
   if ((self = [super initWithFrame:frame])) {
     _imageView = [[FLAnimatedImageView alloc] init];
+    _staticImageView = [[UIImageView alloc] init];
     
     [_imageView addObserver:self forKeyPath:@"currentFrameIndex" options:0 context:nil];
   }
@@ -45,7 +47,9 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
 - (void)layoutSubviews
 {
   _imageView.frame = self.bounds;
+  _staticImageView.frame = self.bounds;
   [self addSubview:_imageView];
+  [self addSubview:_staticImageView];
 }
 
 - (void)setSrc:(NSString *)src
@@ -109,8 +113,13 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
       }
       
       _image = [FLAnimatedImage animatedImageWithGIFData:_imageData];
-      _imageView.contentMode = [_contentMode integerValue];
-      _imageView.animatedImage = _image;
+      if (_image) {
+        _imageView.contentMode = [_contentMode integerValue];
+        _imageView.animatedImage = _image;
+      } else {
+        _staticImageView.contentMode = [_contentMode integerValue];
+        _staticImageView.image = [UIImage imageWithData: _imageData];
+      }
     });
   });
 }
