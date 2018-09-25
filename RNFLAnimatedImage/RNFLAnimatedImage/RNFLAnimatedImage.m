@@ -17,6 +17,8 @@
 #import <React/UIView+React.h>
 #import <React/RCTLog.h>
 
+NSCache* cache;
+
 @implementation RNFLAnimatedImage  {
   
   FLAnimatedImage *_image;
@@ -82,11 +84,24 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
 }
 
 -(void)reloadImage {
+  
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    cache = [[NSCache alloc] init];
+  });
+  
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    NSData *_imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:_src]];
+    
+    NSData *_imageData = [cache objectForKey:_src];
+    
+    if(_imageData == nil) {
+      _imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:_src]];
+      [cache setObject:_imageData forKey: _src];
+    }
     
     if(_imageData == nil) {
       _imageData = [NSData dataWithContentsOfFile:[NSURL URLWithString:_src]];
+      [cache setObject:_imageData forKey: _src];
     }
     
     if(_imageData == nil) {
