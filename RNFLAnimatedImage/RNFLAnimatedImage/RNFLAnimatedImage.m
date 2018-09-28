@@ -96,12 +96,16 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
     
     if(_imageData == nil) {
       _imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:_src]];
-      [cache setObject:_imageData forKey: _src];
+      if (_imageData != nil) {
+        [cache setObject:_imageData forKey: _src];
+      }
     }
     
     if(_imageData == nil) {
       _imageData = [NSData dataWithContentsOfFile:[NSURL URLWithString:_src]];
-      [cache setObject:_imageData forKey: _src];
+      if (_imageData != nil) {
+        [cache setObject:_imageData forKey: _src];
+      }
     }
     
     if(_imageData == nil) {
@@ -140,3 +144,4 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
 }
 
 @end
+
